@@ -59,7 +59,7 @@ pipeline
                     // VERSION = shortCommitHash
                     // set the build display name
                     
-                    sh( "cd azhlfTool && rm azhlf 2> /dev/null")
+                    // sh( "cd azhlfTool && rm azhlf 2> /dev/null")
 
                 }
             }
