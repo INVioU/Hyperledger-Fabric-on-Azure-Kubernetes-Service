@@ -84,8 +84,7 @@ pipeline
             {
                 script
                 {
-                    azureCLI commands: [[exportVariablesString: '', script: 'az group create -n MyResourceGroup --location northeurope'], [exportVariablesString: '/publicIpAddress|PUBLIC_IP', script: 'az vm create -n MyLinuxVM -g MyResourceGroup --image UbuntuLTS --data-disk-sizes-gb 10 20']], principalCredentialId: '<credential_id>'
-
+                    sh(returnStdout: false, script: "az login --username webmaster@inviou.com --password Inviou2019")
                     sh(returnStdout: false, script: "cd azhlfTool && ./azhlf adminProfile import fromAzure -o ${ORDERER_ORG_NAME} -g ${ORDERER_ORG_RESOURCE_GROUP} -s ${ORDERER_ORG_SUBSCRIPTION}");
                     sh(returnStdout: false, script: "cd azhlfTool && ./azhlf connectionProfile import fromAzure -g ${ORDERER_ORG_RESOURCE_GROUP} -s ${ORDERER_ORG_SUBSCRIPTION} -o ${ORDERER_ORG_NAME}"); 
                     sh(returnStdout: false, script: "cd azhlfTool && ./azhlf msp import fromAzure -g ${ORDERER_ORG_RESOURCE_GROUP} -s ${ORDERER_ORG_SUBSCRIPTION} -o ${ORDERER_ORG_NAME}");
