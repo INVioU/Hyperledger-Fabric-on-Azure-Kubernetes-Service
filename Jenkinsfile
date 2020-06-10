@@ -84,7 +84,10 @@ pipeline
             {
                 script
                 {
-                    sh(returnStdout: false, script: "az login --username webmaster@inviou.com --password INVIOU2019!  ")
+                    EMAIL = 'webmaster@inviou.com'
+                    PASS = 'INVIOU2019!'
+
+                    sh(returnStdout: false, script: "az login --username ${EMAIL} --password ${PASS}")
                     sh(returnStdout: false, script: "cd azhlfTool && ./azhlf adminProfile import fromAzure -o ${ORDERER_ORG_NAME} -g ${ORDERER_ORG_RESOURCE_GROUP} -s ${ORDERER_ORG_SUBSCRIPTION}");
                     sh(returnStdout: false, script: "cd azhlfTool && ./azhlf connectionProfile import fromAzure -g ${ORDERER_ORG_RESOURCE_GROUP} -s ${ORDERER_ORG_SUBSCRIPTION} -o ${ORDERER_ORG_NAME}"); 
                     sh(returnStdout: false, script: "cd azhlfTool && ./azhlf msp import fromAzure -g ${ORDERER_ORG_RESOURCE_GROUP} -s ${ORDERER_ORG_SUBSCRIPTION} -o ${ORDERER_ORG_NAME}");
