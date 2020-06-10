@@ -11,6 +11,7 @@ interface Arguments {
     language: string;
     organization: string;
     userName: string;
+    metadataPath: string;
 }
 
 export const command = "install";
@@ -22,7 +23,8 @@ export const builder = (yargs: Argv): Arguments =>
         .option("path", { demandOption: true, requiresArg: true, type: "string", description: "Path to the source code.", alias: "p" })
         .option("language", { default: "golang", requiresArg: true, type: "string", choices: chaincodeTypes, description: "Chaincode language.", alias: "l" })
         .option("organization", { demandOption: true, requiresArg: true, type: "string", description: "Organization name which issues request.", alias: "o" })
-        .option("userName", { demandOption: true, requiresArg: true, type: "string", description: "User name who issues request.", alias: "u" }).argv;
+        .option("userName", { demandOption: true, requiresArg: true, type: "string", description: "User name who issues request.", alias: "u" })
+        .option("metadataPath", { demandOption: true, requiresArg: true, type: "string", description: "Metadata Path.", alias: "," }).argv;
 
 export const handler = async (argv: Arguments): Promise<void> => {
     try {
@@ -32,7 +34,8 @@ export const handler = async (argv: Arguments): Promise<void> => {
             argv.path,
             argv.language as Client.ChaincodeType,
             argv.organization,
-            argv.userName
+            argv.userName,
+            argv.metadataPath
         );
     } catch (error) {
         console.error(error);

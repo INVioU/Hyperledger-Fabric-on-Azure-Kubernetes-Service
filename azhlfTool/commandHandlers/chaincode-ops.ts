@@ -12,7 +12,8 @@ export class ChaincodeOperations {
         chaincodePath: string,
         chaincodeType: Client.ChaincodeType,
         peerOrganization: string,
-        peerAdminName: string
+        peerAdminName: string,
+        metadataPath: string | undefined,
     ): Promise<void> {
         if (!isAbsolutePath(chaincodePath)) {
             throw new Error("Please provide absolute path to the chaincode code.");
@@ -54,12 +55,22 @@ export class ChaincodeOperations {
 
             const txId = peerAdminClient.newTransactionID(true);
 
+            // const request: Client.ChaincodePackageInstallRequest = {
+            //     chaincodeId: chaincodeName,
+            //     chaincodePath,
+            //     chaincodeVersion,
+            //     chaincodeType,
+            //     targets: peers, // all peers
+            //     txId
+            // };
+
             const request: Client.ChaincodeInstallRequest = {
                 chaincodeId: chaincodeName,
                 chaincodePath,
                 chaincodeVersion,
                 chaincodeType,
                 targets: peers, // all peers
+                metadataPath,
                 txId
             };
 
@@ -84,19 +95,32 @@ export class ChaincodeOperations {
             }
         }
     }
-
-    public async InstantiateChaincode(
+    
+    
+    public async InstallAndUpgradeChaincode(
+        
         channelName: string,
         chaincodeName: string,
         chaincodeVersion: string,
+        chaincodePath: string,
+        chaincodeType: Client.ChaincodeType,
         func: string | undefined,
         args: string[] | undefined,
         peerOrganization: string,
-        peerAdminName: string
+        peerAdminName: string,
+        privateCollection: string | undefined,
+        metadata:string | undefined,
+
     ): Promise<void> {
+
+        await this.InstallChaincode(chaincodeName,chaincodeVersion,chaincodePath,chaincodeType,peerOrganization,peerAdminName,metadata);
+       
         const peerProfile = await new ConnectionProfileManager().getConnectionProfile(peerOrganization);
         const gateway = await GatewayHelper.CreateGateway(peerAdminName, peerOrganization, peerProfile);
 
+        console.log(`Peer Organization ${peerOrganization}`)
+
+        console.log(`Private collection state ${privateCollection}`)
         try {
             const peerAdminClient = gateway.getClient();
             const peers = peerAdminClient.getPeersForOrg(peerOrganization);
@@ -128,6 +152,99 @@ export class ChaincodeOperations {
                 fcn: func,
                 args,
                 targets: [peerNode],
+                'collections-config':privateCollection,
+                txId
+            };
+
+            console.log("Sending instantiate proposal request...");
+            const instantiateProposalResponse = await channel.sendUpgradeProposal(instantiateRequest);
+
+            let success = true;
+            // assert
+            instantiateProposalResponse[0].forEach(response => {
+                if (response instanceof Error || response.response.status != 200) {
+                    success = false;
+                    console.log(ObjectToString(response));
+                }
+            });
+
+            if (!success) {
+                console.error(chalk.red("Sending instantiate proposal failed."));
+                return;
+            }
+
+            const proposal = instantiateProposalResponse[1];
+            const proposalResponses = instantiateProposalResponse[0];
+
+            const orderRequest: Client.TransactionRequest = {
+                proposal,
+                proposalResponses: proposalResponses as Client.ProposalResponse[],
+                txId
+            };
+
+            console.log("Sending instantiation transaction to be ordered...");
+            const orderTransactionResponse = await channel.sendTransaction(orderRequest);
+
+            if (orderTransactionResponse.status != "SUCCESS") {
+                success = false;
+                console.error(JSON.stringify(orderTransactionResponse));
+            }
+
+            console.log(success ? chalk.green("Instantiation successful.") : chalk.red("Instantiation failed."));
+        } finally {
+            gateway.disconnect();
+        }
+    }
+
+    public async InstantiateChaincode(
+        channelName: string,
+        chaincodeName: string,
+        chaincodeVersion: string,
+        func: string | undefined,
+        args: string[] | undefined,
+        peerOrganization: string,
+        peerAdminName: string,
+        privateCollection: string | undefined
+
+    ): Promise<void> {
+        const peerProfile = await new ConnectionProfileManager().getConnectionProfile(peerOrganization);
+        const gateway = await GatewayHelper.CreateGateway(peerAdminName, peerOrganization, peerProfile);
+
+        console.log(`Peer Organization ${peerOrganization}`)
+
+        console.log(`Private collection state ${privateCollection}`)
+        try {
+            const peerAdminClient = gateway.getClient();
+            const peers = peerAdminClient.getPeersForOrg(peerOrganization);
+
+            if (!peers.length) {
+                throw new Error("No one peer found in connection profile");
+            }
+
+            const peerNode = peers[0];
+            console.log("Checking that chaincode is installed...");
+            if (!await this.CheckIfChaincodeInstalled(chaincodeName, chaincodeVersion, peerAdminClient, peerNode)) {
+                console.error(chalk.red("Chaincode should be installed."));
+                return;
+            }
+
+            const network = await gateway.getNetwork(channelName);
+            const channel = network.getChannel();
+
+            console.log("Checking that chaincode is not instantiated...");
+            if (await this.CheckIfChaincodeInstantiated(chaincodeName, chaincodeVersion, channel, peerNode)) {
+                console.log(`Chaincode ${chaincodeName} is already instantiated.`);
+            }
+
+            const txId = peerAdminClient.newTransactionID(true);
+
+            const instantiateRequest: Client.ChaincodeInstantiateUpgradeRequest = {
+                chaincodeId: chaincodeName,
+                chaincodeVersion,
+                fcn: func,
+                args,
+                targets: [peerNode],
+                'collections-config':privateCollection,
                 txId
             };
 
