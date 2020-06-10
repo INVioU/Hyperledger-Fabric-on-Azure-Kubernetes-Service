@@ -13,10 +13,10 @@ pipeline
         ORDERER_ADMIN_IDENTITY='admin.Orderer'
         CHANNEL_NAME='test'
 
-        PEER_ORG_SUBSCRIPTION='eeca5b93-a4e3-4a31-8209-5b43a143f619'
-        PEER_ORG_RESOURCE_GROUP='Org1'
-        PEER_ORG_NAME='Org1'
-        PEER_ADMIN_IDENTITY='admin.Org1'
+        PEER_ORG1_SUBSCRIPTION='eeca5b93-a4e3-4a31-8209-5b43a143f619'
+        PEER_ORG1_RESOURCE_GROUP='Org1'
+        PEER_ORG1_NAME='Org1'
+        PEER_ADMIN1_IDENTITY='admin.Org1'
 
         PEER_ORG2_SUBSCRIPTION='eeca5b93-a4e3-4a31-8209-5b43a143f619'
         PEER_ORG2_RESOURCE_GROUP='Org2'
@@ -38,7 +38,7 @@ pipeline
         USER_IDENTITY='admin.Org1'
         PRIVATE_COLLECTION="/Users/orlavee/Documents/INVIOU/financialAsset/collections_config_prod.json"
         USER_IDENTITY2='admin.Org2'
-        
+
     }
     stages
     {   
@@ -48,6 +48,9 @@ pipeline
             {
                 script 
                 {
+
+
+
                     slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
 
                     // calculate GIT lastest commit short-hash
@@ -68,10 +71,59 @@ pipeline
                 script
                 {
                     sh(returnStdout: false, script: "cd azhlfTool && npm install && npm run setup")
+                }
+            }
+        } stage('Import Orderer Profile ')
+        {
+            steps
+            {
+                script
+                {
+                    sh(returnStdout: false, script: "cd azhlfTool && ./azhlf adminProfile import fromAzure -o ${ORDERER_ORG_NAME} -g ${ORDERER_ORG_RESOURCE_GROUP} -s ${ORDERER_ORG_SUBSCRIPTION}");
+                    sh(returnStdout: false, script: "cd azhlfTool && ./azhlf connectionProfile import fromAzure -g ${ORDERER_ORG_RESOURCE_GROUP} -s ${ORDERER_ORG_SUBSCRIPTION} -o ${ORDERER_ORG_NAME}"); 
+                    sh(returnStdout: false, script: "cd azhlfTool && ./azhlf msp import fromAzure -g ${ORDERER_ORG_RESOURCE_GROUP} -s ${ORDERER_ORG_SUBSCRIPTION} -o ${ORDERER_ORG_NAME}");
 
                 }
             }
-        }
+        } stage('Import Org1 profiles ')
+        {
+            steps
+            {
+                script
+                {
+                    sh(returnStdout: false, script: "cd azhlfTool && ./azhlf adminProfile import fromAzure -g ${PEER_ORG1_RESOURCE_GROUP} -s ${PEER_ORG1_SUBSCRIPTION} -o ${PEER_ORG1_NAME}");
+                    sh(returnStdout: false, script: "cd azhlfTool && ./azhlf connectionProfile import fromAzure -g ${PEER_ORG1_RESOURCE_GROUP} -s ${PEER_ORG1_SUBSCRIPTION} -o ${PEER_ORG1_NAME}");
+                    sh(returnStdout: false, script: "cd azhlfTool && ./azhlf msp import fromAzure -g ${PEER_ORG1_RESOURCE_GROUP} -s ${PEER_ORG1_SUBSCRIPTION} -o ${PEER_ORG1_NAME}");
+                }
+            }
+        } stage('Import Org2 profiles ')
+        {
+            steps
+            {
+                script
+                {
+                     sh(returnStdout: false, script: "cd azhlfTool && ./azhlf adminProfile import fromAzure -g ${PEER_ORG2_RESOURCE_GROUP} -s ${PEER_ORG2_SUBSCRIPTION} -o ${PEER_ORG2_NAME}");
+                    sh(returnStdout: false, script: "cd azhlfTool && ./azhlf connectionProfile import fromAzure -g ${PEER_ORG2_RESOURCE_GROUP} -s ${PEER_ORG2_SUBSCRIPTION} -o ${PEER_ORG2_NAME}");
+                    sh(returnStdout: false, script: "cd azhlfTool && ./azhlf msp import fromAzure -g ${PEER_ORG2_RESOURCE_GROUP} -s ${PEER_ORG2_SUBSCRIPTION} -o ${PEER_ORG2_NAME}");
+                }
+            }
+        } stage('Import Org3 profiles ')
+        {
+            steps
+            {
+                script
+                {
+                    //  sh(returnStdout: false, script: "cd azhlfTool && ./azhlf adminProfile import fromAzure -g ${PEER_ORG1_RESOURCE_GROUP} -s ${PEER_ORG1_SUBSCRIPTION} -o ${PEER_ORG1_NAME}");
+                    // sh(returnStdout: false, script: "cd azhlfTool && ./azhlf connectionProfile import fromAzure -g ${PEER_ORG1_RESOURCE_GROUP} -s ${PEER_ORG1_SUBSCRIPTION} -o ${PEER_ORG1_NAME}");
+                    // sh(returnStdout: false, script: "cd azhlfTool && ./azhlf msp import fromAzure -g ${PEER_ORG1_RESOURCE_GROUP} -s ${PEER_ORG1_SUBSCRIPTION} -o ${PEER_ORG1_NAME}");
+                }
+            }
+        } stage('Build AzhlfTool ')
+        {
+            steps
+            {
+                script
+                {
         // stage('Docker push')
         // {
         //     steps
