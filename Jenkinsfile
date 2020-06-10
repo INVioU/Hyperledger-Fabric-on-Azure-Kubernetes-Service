@@ -5,15 +5,15 @@ pipeline
         buildDiscarder(logRotator(numToKeepStr: '3'))
     }
     agent any
-    environment 
-    {
+    // environment 
+    // {
         
-        // VERSION = 'latest'
-        // PROJECT = 'inviou-api'
-        // IMAGE = 'inviou-api:latest'
-        // ECRURL = 'https://724122376450.dkr.ecr.eu-west-2.amazonaws.com'
-        // ECRCRED = 'ecr:eu-west-2:8f2fb7ca-4abb-472c-8f9f-942335d74de1'
-    }
+    //     // VERSION = 'latest'
+    //     // PROJECT = 'inviou-api'
+    //     // IMAGE = 'inviou-api:latest'
+    //     // ECRURL = 'https://724122376450.dkr.ecr.eu-west-2.amazonaws.com'
+    //     // ECRCRED = 'ecr:eu-west-2:8f2fb7ca-4abb-472c-8f9f-942335d74de1'
+    // }
     stages
     {   
         stage('Build preparations')
