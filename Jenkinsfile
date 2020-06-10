@@ -5,15 +5,43 @@ pipeline
         buildDiscarder(logRotator(numToKeepStr: '3'))
     }
     agent any
-    // environment 
-    // {
-        
-    //     // VERSION = 'latest'
-    //     // PROJECT = 'inviou-api'
-    //     // IMAGE = 'inviou-api:latest'
-    //     // ECRURL = 'https://724122376450.dkr.ecr.eu-west-2.amazonaws.com'
-    //     // ECRCRED = 'ecr:eu-west-2:8f2fb7ca-4abb-472c-8f9f-942335d74de1'
-    // }
+    environment 
+    {  
+        ORDERER_ORG_SUBSCRIPTION=eeca5b93-a4e3-4a31-8209-5b43a143f619
+        ORDERER_ORG_RESOURCE_GROUP='orderers'
+        ORDERER_ORG_NAME='Orderer'
+        ORDERER_ADMIN_IDENTITY='admin.Orderer'
+        CHANNEL_NAME='test'
+
+        PEER_ORG_SUBSCRIPTION='eeca5b93-a4e3-4a31-8209-5b43a143f619'
+        PEER_ORG_RESOURCE_GROUP='Org1'
+        PEER_ORG_NAME='Org1'
+        PEER_ADMIN_IDENTITY='admin.Org1'
+
+
+        PEER_ORG2_SUBSCRIPTION='eeca5b93-a4e3-4a31-8209-5b43a143f619'
+        PEER_ORG2_RESOURCE_GROUP='Org2'
+        PEER_ORG2_NAME='Org2'
+        PEER_ADMIN2_IDENTITY='admin.Org2'
+
+
+
+        STORAGE_SUBSCRIPTION'=eeca5b93-a4e3-4a31-8209-5b43a143f619'
+        STORAGE_RESOURCE_GROUP='inviou'
+        STORAGE_ACCOUNT='inviou'
+        STORAGE_LOCATION='ukSouth'
+        STORAGE_FILE_SHARE='inviou'
+
+        CC_NAME="inviou"
+        CC_VERSION="1.0.74"
+        CC_PATH="/Users/orlavee/Documents/INVIOU/financialAsset"
+        CC_LANG="node"
+        USER_IDENTITY="admin"
+
+        USER_IDENTITY='admin.Org1'
+        PRIVATE_COLLECTION="/Users/orlavee/Documents/INVIOU/financialAsset/collections_config_prod.json"
+        USER_IDENTITY2='admin.Org2'
+    }
     stages
     {   
         stage('Build preparations')
@@ -26,7 +54,7 @@ pipeline
 
                     // calculate GIT lastest commit short-hash
                     gitCommitHash = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-                    // BRANCH = env.BRANCH_NAME
+                    BRANCH = env.BRANCH_NAME
                     echo "[*] current branch **** ****  ${BRANCH}"
                     
                     // calculate a sample version tag   
