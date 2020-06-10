@@ -58,6 +58,9 @@ pipeline
                     // calculate a sample version tag   
                     // VERSION = shortCommitHash
                     // set the build display name
+                    
+                    sh( "cd azhlfTool && rm azhlf 2> /dev/null")
+
                 }
             }
         }
@@ -67,7 +70,6 @@ pipeline
             {
                 script
                 {
-                    sh(returnStdout: false, script: "cd azhlfTool && rm azhlf 2> /dev/null")
 
                     sh(returnStdout: false, script: "cd azhlfTool && npm install && npm run setup")
                 }
