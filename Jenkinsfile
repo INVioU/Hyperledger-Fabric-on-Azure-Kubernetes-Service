@@ -66,7 +66,7 @@ pipeline
             {
                 script
                 {
-                    sh(returnStdout: false, script: "cd azhlfTool &&  npm install &&  npm run setup")
+                    sh(returnStdout: false, script: "cd azhlfTool && npm install && npm run setup")
 
                 }
             }
