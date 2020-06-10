@@ -7,7 +7,7 @@ pipeline
     agent any
     environment 
     {  
-        ORDERER_ORG_SUBSCRIPTION=eeca5b93-a4e3-4a31-8209-5b43a143f619
+        ORDERER_ORG_SUBSCRIPTION='eeca5b93-a4e3-4a31-8209-5b43a143f619'
         ORDERER_ORG_RESOURCE_GROUP='orderers'
         ORDERER_ORG_NAME='Orderer'
         ORDERER_ADMIN_IDENTITY='admin.Orderer'
@@ -18,12 +18,10 @@ pipeline
         PEER_ORG_NAME='Org1'
         PEER_ADMIN_IDENTITY='admin.Org1'
 
-
         PEER_ORG2_SUBSCRIPTION='eeca5b93-a4e3-4a31-8209-5b43a143f619'
         PEER_ORG2_RESOURCE_GROUP='Org2'
         PEER_ORG2_NAME='Org2'
         PEER_ADMIN2_IDENTITY='admin.Org2'
-
 
 
         STORAGE_SUBSCRIPTION'=eeca5b93-a4e3-4a31-8209-5b43a143f619'
