@@ -118,12 +118,7 @@ pipeline
                     // sh(returnStdout: false, script: "cd azhlfTool && ./azhlf msp import fromAzure -g ${PEER_ORG1_RESOURCE_GROUP} -s ${PEER_ORG1_SUBSCRIPTION} -o ${PEER_ORG1_NAME}");
                 }
             }
-        } stage('Build AzhlfTool ')
-        {
-            steps
-            {
-                script
-                {
+        } 
         // stage('Docker push')
         // {
         //     steps
