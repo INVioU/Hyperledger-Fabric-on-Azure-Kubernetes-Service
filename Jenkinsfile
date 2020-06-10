@@ -24,7 +24,7 @@ pipeline
         PEER_ADMIN2_IDENTITY='admin.Org2'
 
 
-        STORAGE_SUBSCRIPTION'=eeca5b93-a4e3-4a31-8209-5b43a143f619'
+        STORAGE_SUBSCRIPTION='eeca5b93-a4e3-4a31-8209-5b43a143f619'
         STORAGE_RESOURCE_GROUP='inviou'
         STORAGE_ACCOUNT='inviou'
         STORAGE_LOCATION='ukSouth'
