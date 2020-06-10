@@ -26,11 +26,11 @@ pipeline
 
                     // calculate GIT lastest commit short-hash
                     gitCommitHash = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-                    BRANCH = env.BRANCH_NAME
+                    // BRANCH = env.BRANCH_NAME
                     echo "[*] current branch **** ****  ${BRANCH}"
                     
                     // calculate a sample version tag   
-                    VERSION = shortCommitHash
+                    // VERSION = shortCommitHash
                     // set the build display name
                 }
             }
@@ -41,9 +41,7 @@ pipeline
             {
                 script
                 {
-                    // Build the docker image using a Dockerfile
                     sh(returnStdout: false, script: "cd azhlfTool && npm install && npm run setup")
-                    // sh(returnStdout: false, script: "docker rmi \$(docker images --filter \"dangling=true\" -q --no-trunc) -f") 
 
                 }
             }
