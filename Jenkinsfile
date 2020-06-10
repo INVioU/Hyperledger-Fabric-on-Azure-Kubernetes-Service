@@ -107,18 +107,18 @@ pipeline
                 }
             }
         } 
-        stage('Import Org3 profiles ')
-        {
-            steps
-            {
-                script
-                {
+        // stage('Import Org3 profiles ')
+        // {
+            // steps
+            // {
+                // script
+                // {
                     //  sh(returnStdout: false, script: "cd azhlfTool && ./azhlf adminProfile import fromAzure -g ${PEER_ORG1_RESOURCE_GROUP} -s ${PEER_ORG1_SUBSCRIPTION} -o ${PEER_ORG1_NAME}");
                     // sh(returnStdout: false, script: "cd azhlfTool && ./azhlf connectionProfile import fromAzure -g ${PEER_ORG1_RESOURCE_GROUP} -s ${PEER_ORG1_SUBSCRIPTION} -o ${PEER_ORG1_NAME}");
                     // sh(returnStdout: false, script: "cd azhlfTool && ./azhlf msp import fromAzure -g ${PEER_ORG1_RESOURCE_GROUP} -s ${PEER_ORG1_SUBSCRIPTION} -o ${PEER_ORG1_NAME}");
-                }
-            }
-        } 
+                // }
+            // }
+        // } 
         // stage('Docker push')
         // {
         //     steps
