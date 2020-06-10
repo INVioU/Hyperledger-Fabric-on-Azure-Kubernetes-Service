@@ -34,7 +34,6 @@ pipeline
         CC_VERSION="1.0.74"
         CC_PATH="/Users/orlavee/Documents/INVIOU/financialAsset"
         CC_LANG="node"
-        USER_IDENTITY="admin"
 
         USER_IDENTITY='admin.Org1'
         PRIVATE_COLLECTION="/Users/orlavee/Documents/INVIOU/financialAsset/collections_config_prod.json"
