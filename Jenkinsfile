@@ -38,6 +38,7 @@ pipeline
         USER_IDENTITY='admin.Org1'
         PRIVATE_COLLECTION="/Users/orlavee/Documents/INVIOU/financialAsset/collections_config_prod.json"
         USER_IDENTITY2='admin.Org2'
+        
     }
     stages
     {   
