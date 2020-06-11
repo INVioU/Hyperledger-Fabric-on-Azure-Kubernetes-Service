@@ -84,8 +84,8 @@ pipeline
             {
                 script
                 {
-                    EMAIL = '0abd8d24-0b3c-4996-a086-c0b185d88136'
-                    PASS = 'VdoqzZJEbIpXbr10M9GrqVSSz6fXpIx7__'
+                    EMAIL = 'e2d11dc5-dbc5-441f-ad84-eb63f5103c48'
+                    PASS = 'RfK-Vb788_Grox1PABLNHJ_oEFvBzTW2h0'
                     TENANT= '1b90173e-6e52-4868-8607-d434dd698d93'
                     sh(returnStdout: false, script: "az login -u ${EMAIL} -p ${PASS} --service-principal -t  ${TENANT}")
                     sh(returnStdout: false, script: "cd azhlfTool && ./azhlf adminProfile import fromAzure -o ${ORDERER_ORG_NAME} -g ${ORDERER_ORG_RESOURCE_GROUP} -s ${ORDERER_ORG_SUBSCRIPTION}");
