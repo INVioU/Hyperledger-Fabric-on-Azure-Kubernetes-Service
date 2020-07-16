@@ -24,7 +24,7 @@ export const builder = (yargs: Argv): Arguments =>
         .option("language", { default: "golang", requiresArg: true, type: "string", choices: chaincodeTypes, description: "Chaincode language.", alias: "l" })
         .option("organization", { demandOption: true, requiresArg: true, type: "string", description: "Organization name which issues request.", alias: "o" })
         .option("userName", { demandOption: true, requiresArg: true, type: "string", description: "User name who issues request.", alias: "u" })
-        .option("metadataPath", { demandOption: true, requiresArg: true, type: "string", description: "Metadata Path.", alias: "," }).argv;
+        .option("metadataPath", { demandOption: true, requiresArg: false, type: "string", description: "Metadata Path.", alias: "m" }).argv;
 
 export const handler = async (argv: Arguments): Promise<void> => {
     try {

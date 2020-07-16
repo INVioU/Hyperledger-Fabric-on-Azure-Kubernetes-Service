@@ -77,6 +77,7 @@ pipeline
                     sh(returnStdout: false, script: "cd azhlfTool && npm install  && npm run setup")
                 }
             }
+            
         } 
         stage('Import Orderer Profile ')
         {
