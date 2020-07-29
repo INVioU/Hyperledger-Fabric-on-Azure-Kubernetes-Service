@@ -58,7 +58,7 @@ export class AzureBlockchainService {
             managementUri
         )) as ConnectionProfile;
 
-        if (!connectionProfile) {
+        if ( !connectionProfile) {
             console.log("Fallback to marketplace based application...");
             connectionProfile = (await this.GetProfileFromMarketplaceBasedApp(
                 ProfileType.Connection,
@@ -68,6 +68,8 @@ export class AzureBlockchainService {
                 managementUri
             )) as ConnectionProfile;
         }
+
+
 
         if (!connectionProfile) {
             throw new Error("Empty connection profile");
@@ -165,11 +167,17 @@ export class AzureBlockchainService {
         managementUri?: string
     ): Promise<AdminProfile | ConnectionProfile | MSP | undefined> {
         const credentials = await this.getCredentials(subscriptionId);
-
+        console.log(`credentials : ${credentials}`)
         console.log("Trying to find requested resource in Azure Blockchain Service...");
         const blockchainMembersFilter = `resourceType eq 'Microsoft.Blockchain/blockchainMembers' and name eq '${organization}'`;
+        console.log(`blockchainMembersFilter : ${blockchainMembersFilter}`)
+
         const client = new ResourceManagementClient(credentials, subscriptionId, { baseUri: managementUri });
+        console.log(`client : ${client}`)
+
         const blockchainMembers = await client.resources.listByResourceGroup(resourceGroup, { filter: blockchainMembersFilter, top: 1 });
+        console.log(`blockchainMembers : ${blockchainMembers}`)
+
         if (!blockchainMembers.length || blockchainMembers[0].kind != HyperledgerFabricKind) {
             console.log(`Could not find Azure blockchain Hyperledger Fabric member ${organization} in resource group ${resourceGroup}`);
             return undefined;

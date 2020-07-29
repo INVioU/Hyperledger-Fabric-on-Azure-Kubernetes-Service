@@ -91,6 +91,75 @@ export class NetworkOperations {
         }
     }
 
+    public async updateConfig( channelName: string, ordererAdminName: string, ordererOrg: string): Promise<void> {
+        // search for the orderer endpoint.
+        const ordererProfile = await new ConnectionProfileManager().getConnectionProfile(ordererOrg);
+
+        if (!ordererProfile.orderers || Object.keys(ordererProfile.orderers).length == 0) {
+            throw new Error("No orderers in connection profile.");
+        }
+
+        const ordererName = Object.keys(ordererProfile.orderers)[0];
+
+        // check, create and connect gateway.
+        const gateway = await GatewayHelper.CreateGateway(ordererAdminName, ordererOrg, ordererProfile);
+
+        // do operations.
+        try {
+            console.log("Retrieving system channel configuration...");
+            const ordererAdminClient = gateway.getClient();
+
+            const channel = ordererAdminClient.newChannel(channelName);
+            const orderer = ordererAdminClient.getOrderer(ordererName);
+            channel.addOrderer(orderer);
+
+            const configEnvelope = await channel.getChannelConfigFromOrderer();
+
+            const configtxlator = new Configtxlator();
+            const currentConfigEnvelope = await configtxlator.decode<ConfigEnvelope>(configEnvelope.toBuffer(), ProtobuffType.CommonConfigenvelope);
+            const currentConfig = currentConfigEnvelope.config;
+
+            console.log("Calculating configuration update...");
+            // clone current config
+            const modifiedConfig = JSON.parse(JSON.stringify(currentConfig));
+           
+        
+            modifiedConfig.channel_group.groups.Orderer.values.BatchSize.value.max_message_count=1;
+            modifiedConfig.channel_group.groups.Orderer.values.BatchTimeout.value.timeout='500ms';
+
+            const configUpdate = await configtxlator.computeUpdate(channelName, ProtobuffType.CommonConfig, currentConfig, modifiedConfig);
+
+            console.log("Sending configuration update transaction to orderer...");
+
+            console.log(JSON.stringify(configUpdate));
+
+            const signature = ordererAdminClient.signChannelConfig(configUpdate);
+            const signatures: Client.ConfigSignature[] = [signature];
+
+            const txId = ordererAdminClient.newTransactionID(true);
+            const request: Client.ChannelRequest = {
+                config: configUpdate,
+                name: channelName,
+                orderer,
+                signatures,
+                txId
+            };
+
+            // send request for update channel
+            const response = await ordererAdminClient.updateChannel(request);
+
+            if (response.status != "SUCCESS") {
+                console.error(chalk.red(`Update system channel failed with status ${response.status}.`));
+                console.error(`Response: ${response.info}`);
+                return;
+            }
+
+            console.log(`Successfully update channel configuration!`);
+        } finally {
+            gateway.disconnect();
+        }
+    }
+
     public async CreateApplicationChannel(channelName: string, ordererAdminName: string, ordererOrg: string): Promise<void> {
         if (channelName == Constants.SystemChannelName) {
             console.error(chalk.red("Invalid channel name"));
