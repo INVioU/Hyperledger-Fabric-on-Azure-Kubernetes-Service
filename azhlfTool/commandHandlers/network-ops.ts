@@ -123,7 +123,6 @@ export class NetworkOperations {
             // clone current config
             const modifiedConfig = JSON.parse(JSON.stringify(currentConfig));
            
-        
             modifiedConfig.channel_group.groups.Orderer.values.BatchSize.value.max_message_count=1;
             modifiedConfig.channel_group.groups.Orderer.values.BatchTimeout.value.timeout='500ms';
 
